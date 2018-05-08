@@ -3,12 +3,15 @@ var app = angular.module('app',[]);
 app.controller('MainController',function($http,$interval){
   var self = this;
   self.data = [];
+  
   self.dataMax = () => {
     return Math.max(...self.data);
   }
+
   self.dataMin = () => {
     return Math.min(...self.data);
   }
+
   self.dataAve = () => {
     let result;
     if (self.data.length >= 1) {
@@ -20,6 +23,7 @@ app.controller('MainController',function($http,$interval){
     }
     return result;
   }
+
   $interval(() => {
     $http.get('/devices/reading')
     .then(response => {
@@ -27,5 +31,18 @@ app.controller('MainController',function($http,$interval){
       self.data = [...self.data,response.data.value];
     })
   }, 1000)
+
+  self.lightSensitive = () => {
+    if (self.data.length > 0) {
+      const value = self.data[self.data.length - 1];
+      return {
+        "background-color": `RGB(${value},${value},${value})`,
+        "color": value < 120 ? "whitesmoke": "black"
+      }
+    } else {
+      return null;
+    }
+  }
+
 })
 
